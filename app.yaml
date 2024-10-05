@@ -1,7 +1,8 @@
 runtime: python39
 entrypoint: gunicorn -b :$PORT app:app
 
-
+runtime_config:
+  operating_system: ubuntu22
 
 manual_scaling:
   instances: 1
