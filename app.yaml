@@ -1,9 +1,6 @@
 runtime: python
 entrypoint: gunicorn -b :$PORT main:app
 
-env_variables:
-  GOOGLE_APPLICATION_CREDENTIALS: "path/to/serviceAccountKey.json"
-
 handlers:
   - url: /.*
     script: auto
