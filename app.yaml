@@ -1,5 +1,5 @@
 runtime: python39
-entrypoint: gunicorn -b :$PORT app:app
+entrypoint: gunicorn -b :$PORT --timeout 120 app:app
 
 runtime_config:
   operating_system: ubuntu22
