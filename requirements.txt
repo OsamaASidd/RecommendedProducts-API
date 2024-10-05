@@ -4,5 +4,3 @@ Flask
 pytz
 numpy
 scikit-learn
-requests
-json
