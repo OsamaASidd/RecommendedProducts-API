@@ -14,14 +14,12 @@ def get_users_data():
     new_df = new_df.rename(columns={"user_id":"uID", "category_subcat_subsubcat": "logMap"})
     return new_df
 
-@app.route('/getRecommendedProducts', methods=['GET'])
-def recommend_products():
+@app.route('/getRecommendedProducts/<user_id>', methods=['GET'])
+def recommend_products(user_id):
     try:
-        user_id = request.json.get('user_id')
-
+        # 'user_id' is now directly available as a function parameter
         if not user_id:
-            return jsonify({"error": "Missing user_id in request"}), 400
-
+            return jsonify({"error": "Missing user_id in the URL path"}), 400
         df = get_users_data()
         df['searchTerms'] = df.apply(lambda row: createSearchTerm(row['logMap']), axis=1)
         user_data = df[df['uID'] == user_id]
