@@ -3,7 +3,20 @@ from firebase import get_Users, extract_category_subcat
 from RecSys import rec, createSearchTerm
 import pandas as pd
 import ast 
+
+
 app = Flask(__name__)
+
+
+@app.route("/")
+def hello() -> str:
+    """Return a friendly HTTP greeting.
+
+    Returns:
+        A string with the words 'Hello World!'.
+    """
+    return "Hello World!"
+
 
 @app.route('/getusers', methods=['GET'])
 def get_users_data():
