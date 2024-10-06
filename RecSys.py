@@ -6,6 +6,7 @@ import ast
 from scipy import stats  
 from collections import Counter
 from firebase import *
+from google.api_core.retry import Retry
 # Load the CSV file
 # df = pd.read_csv('users_Categories.csv')
 
@@ -47,7 +48,7 @@ def rec(user_data):
     mode = Counter(user_search_terms).most_common(1)[0][0]
     user_vector = mlb.fit_transform([mode]).sum(axis=0)
     print(mode)
-    products_ref = db.collection('products').stream()  
+    products_ref = db.collection('products').stream(retry=Retry())
     
     products = []
     for product in products_ref:

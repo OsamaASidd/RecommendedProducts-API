@@ -6,7 +6,7 @@ import pandas as pd
 import datetime
 import pytz
 import json
-
+from google.api_core.retry import Retry
 
 def get_firebase_credentials():
     url = "https://firebasestorage.googleapis.com/v0/b/lookflock-api.appspot.com/o/serviceAccountKey.json?alt=media&token=1899423d-ce09-412c-b508-4ffa333d06ed"
@@ -19,15 +19,15 @@ db = firestore.client()
 
 
 def get_Users():
-    users_ref = db.collection('users').stream()
+    users_ref = db.collection('users').stream(retry=Retry())
     users_list = []
     for user in users_ref:
         user_dict = user.to_dict()
         user_dict['user_id'] = user.id
-        logs_ref = db.collection('users').document(user.id).collection('logs').stream()
+        logs_ref = db.collection('users').document(user.id).collection('logs').stream(retry=Retry())
         logs_list = [log.to_dict() for log in logs_ref] 
         user_dict['logs'] = logs_list  
-        activity_ref = db.collection('users').document(user.id).collection('userActivity').stream()
+        activity_ref = db.collection('users').document(user.id).collection('userActivity').stream(retry=Retry())
         activity_list = [activity.to_dict() for activity in activity_ref]  
         user_dict['userActivity'] = activity_list  
         users_list.append(user_dict)
