@@ -3,7 +3,8 @@ from firebase import get_Users, extract_category_subcat
 from RecSys import rec, createSearchTerm
 import pandas as pd
 import ast 
-
+import google.generativeai as genai
+import re
 
 app = Flask(__name__)
 
@@ -17,7 +18,9 @@ def hello() -> str:
     """
     return "Hello World!"
 
-
+""" 
+    :description: returns a Dataframe for all users with their logMap (<Category> _ <SubCategory> _ <SubsubCategory>)
+"""
 @app.route('/getusers', methods=['GET'])
 def get_users_data():
     users_df = get_Users()
@@ -30,7 +33,6 @@ def get_users_data():
 @app.route('/getRecommendedProducts/<user_id>', methods=['GET'])
 def recommend_products(user_id):
     try:
-        # 'user_id' is now directly available as a function parameter
         if not user_id:
             return jsonify({"error": "Missing user_id in the URL path"}), 400
         df = get_users_data()
@@ -43,6 +45,35 @@ def recommend_products(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('/evaluateText', methods=['GET'])
+def evaluate_text():
+    GOOGLE_API_KEY = "AIzaSyDLALmBwgf7xcEu5mY3pS6JL_FsN85LTxw"
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-pro')
+
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    content = request.get_json().get('text', '')
+
+    if not content:
+        return jsonify({"error": "No text provided"}), 400
+
+    prompt = f"""
+    Determine if text is inappropriate, has sexually explicit content, hate speech, harassment, or dangerous content.
+    If so, respond with 'Negative'. If the text is acceptable, return 'Positive'.
+    Text: "{content}"
+    """
+
+    try:
+        response = str(model.generate_content(prompt))
+        match = re.search(r'"text":\s*"([^"]*)"', response)
+        result = match.group(1)
+        # safety_ratings = {rating.category: rating.probability for rating in response.result.candidates[0].safety_ratings}
+        return jsonify({"evaluation": result}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 

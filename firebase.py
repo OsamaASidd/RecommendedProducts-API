@@ -17,7 +17,9 @@ cred = get_firebase_credentials()
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-
+""" 
+    :description: Reads the user collection and brings their docs and sub collection docs and returns a data frame for all users in our db
+"""
 def get_Users():
     users_ref = db.collection('users').stream(retry=Retry())
     users_list = []
@@ -38,7 +40,9 @@ df = get_Users()
 
 columns_to_keep = ['user_id', 'logs', 'userlogs', 'userActivity', 'favCategories', 'favBrands']
 filtered_df = df[columns_to_keep]
-
+""" 
+    :description: <Category> _ <SubCategory> _ <SubsubCategory>
+"""
 def extract_category_subcat(df):
     extracted_data = {}
 
