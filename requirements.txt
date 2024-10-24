@@ -5,3 +5,4 @@ pytz
 numpy
 scikit-learn
 gunicorn
+google-cloud-language
