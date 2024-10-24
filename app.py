@@ -52,11 +52,7 @@ def evaluate_text():
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-pro')
 
-    if not request.is_json:
-        return jsonify({"error": "Request must be JSON"}), 400
-
-    content = request.get_json().get('text', '')
-
+    content = request.args.get('text', default='')
     if not content:
         return jsonify({"error": "No text provided"}), 400
 
