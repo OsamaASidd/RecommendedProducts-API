@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from firebase import get_Users, extract_category_subcat
+from flask_cors import CORS, cross_origin
 from RecSys import rec, createSearchTerm
 import pandas as pd
 import ast 
@@ -7,7 +8,8 @@ import google.generativeai as genai
 import re
 
 app = Flask(__name__)
-
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/")
 def hello() -> str:
@@ -47,6 +49,7 @@ def recommend_products(user_id):
 
 
 @app.route('/evaluateText', methods=['GET'])
+@cross_origin()
 def evaluate_text():
     GOOGLE_API_KEY = "AIzaSyDLALmBwgf7xcEu5mY3pS6JL_FsN85LTxw"
     genai.configure(api_key=GOOGLE_API_KEY)
